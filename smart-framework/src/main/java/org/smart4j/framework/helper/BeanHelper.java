@@ -6,6 +6,9 @@ import java.util.Set;
 
 import org.smart4j.framework.util.ReflectionUtil;
 
+import com.sun.istack.internal.NotNull;
+import lombok.NonNull;
+
 public final class BeanHelper {
   private static final Map<Class<?>, Object> BEAN_MAP = new HashMap<>();
 
@@ -25,5 +28,9 @@ public final class BeanHelper {
       throw new RuntimeException("can not get bean by class: " + cls);
     }
     return (T)BEAN_MAP.get(cls);
+  }
+
+  public static void setBean(@NonNull Class<?> cls, @NotNull Object obj) {
+    BEAN_MAP.put(cls, obj);
   }
 }
