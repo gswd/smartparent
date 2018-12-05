@@ -3,6 +3,7 @@ package org.smart4j.framework;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,8 +81,14 @@ public class DispatcherServlet extends HttpServlet {
       Param param = new Param(paramMap);
 
       Object controllerBean = BeanHelper.getBean(handler.getControllerClass());
+      Method actionMethod = handler.getActionMethod();
 
-      Object result = ReflectionUtil.invokeMethod(controllerBean, handler.getActionMethod(), param);
+      Object result;
+      if (param.isEmpty()) {
+        result = ReflectionUtil.invokeMethod(controllerBean, actionMethod);
+      } else {
+        result = ReflectionUtil.invokeMethod(controllerBean, actionMethod, param);
+      }
 
       if (result instanceof View) {
         View view = (View)result;
