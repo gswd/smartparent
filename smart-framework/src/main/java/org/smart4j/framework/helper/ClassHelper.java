@@ -35,8 +35,9 @@ public final class ClassHelper {
     return Stream.concat(getServiceClassSet().stream(), getControllerClassSet().stream()).collect(Collectors.toSet());
   }
 
+  // 父类.isAssignableFrom(子类) ==> true
   public static Set<Class<?>> getClassSetBySuper(@NonNull Class<?> superClass) {
-    return CLASS_SET.stream().filter(c -> c.isAssignableFrom(c) && !superClass.equals(c)).collect(Collectors.toSet());
+    return CLASS_SET.stream().filter(c -> superClass.isAssignableFrom(c) && !superClass.equals(c)).collect(Collectors.toSet());
   }
 
   public static Set<Class<?>> getClassSetByAnnotation(Class<? extends Annotation> annotationClass) {

@@ -1,4 +1,4 @@
-package org.smart4j.sample.helper;
+package org.smart4j.framework.helper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -82,6 +82,46 @@ public class DatabaseHelper {
     }
   }
 
+  public static void beginTransaction() {
+    Connection conn = getConnection();
+    if (Objects.nonNull(conn)) {
+      try {
+        conn.setAutoCommit(false);
+      } catch (SQLException e) {
+        LOGGER.error("begin transaction failure", e);
+        throw new RuntimeException(e);
+      } finally {
+        CONNECTION_HOLDER.set(conn);
+      }
+    }
+  }
+
+  public static void commitTransaction() {
+    Connection conn = getConnection();
+    if (Objects.nonNull(conn)) {
+      try {
+        conn.commit();
+      } catch (SQLException e) {
+        LOGGER.error("commit transaction failure", e);
+        throw new RuntimeException(e);
+      } finally {
+        closeConnection();
+      }
+    }
+  }
+  public static void rollbackTransaction() {
+    Connection conn = getConnection();
+    if (Objects.nonNull(conn)) {
+      try {
+        conn.rollback();
+      } catch (SQLException e) {
+        LOGGER.error("rollback transaction failure", e);
+        throw new RuntimeException(e);
+      } finally {
+        closeConnection();
+      }
+    }
+  }
   public static <T> List<T> queryEntityList(Class<T> entityClass, String sql, Object ... params) {
 
     try {

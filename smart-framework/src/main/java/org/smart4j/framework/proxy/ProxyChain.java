@@ -33,7 +33,7 @@ public class ProxyChain {
 
   public Object doProxyChain() throws Throwable {
     if (proxyIndex < proxyList.size()) {
-      return proxyList.get(proxyIndex).doProxy(this);
+      return proxyList.get(proxyIndex++).doProxy(this);
     }
 
     return methodProxy.invokeSuper(targetObject, methodParams);

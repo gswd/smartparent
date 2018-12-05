@@ -8,9 +8,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.smart4j.framework.annotation.Aspect;
+import org.smart4j.framework.annotation.Service;
 import org.smart4j.framework.proxy.AspectProxy;
 import org.smart4j.framework.proxy.Proxy;
 import org.smart4j.framework.proxy.ProxyManager;
+import org.smart4j.framework.proxy.TransactionProxy;
 import org.smart4j.framework.util.ReflectionUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,20 @@ public class AopHelper {
    */
   private static Map<Class<?>,Set<Class<?>>> createProxyMap() {
     Map<Class<?>, Set<Class<?>>> proxyMap = new HashMap<>();
+
+    addAspectProxy(proxyMap);
+    addTransactionProxy(proxyMap);
+
+    return proxyMap;
+  }
+
+  private static void addTransactionProxy(Map<Class<?>,Set<Class<?>>> proxyMap) {
+    Set<Class<?>> serviceClassSet = ClassHelper.getClassSetByAnnotation(Service.class);
+    proxyMap.put(TransactionProxy.class, serviceClassSet);
+  }
+
+  private static void addAspectProxy(Map<Class<?>,Set<Class<?>>> proxyMap) {
+
     Set<Class<?>> proxyClassSet = ClassHelper.getClassSetBySuper(AspectProxy.class);
     proxyClassSet.stream().filter(p -> p.isAnnotationPresent(Aspect.class)).forEach(p -> {
       Aspect aspect = p.getAnnotation(Aspect.class);
@@ -43,7 +59,6 @@ public class AopHelper {
       }
 
     });
-    return proxyMap;
   }
 
   private static Map<Class<?>,List<Proxy>> createTargetMap(Map<Class<?>,Set<Class<?>>> proxyMap){
